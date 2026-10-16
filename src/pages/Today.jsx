@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
+import { MenuButton } from '../components/Layout.jsx'
 import { Wind, Settings2, Utensils, Activity, Droplet, NotebookPen, Check, AlertTriangle, ChevronRight, ChevronDown, Footprints, ClipboardList, Moon, Flame, Sparkles, Info } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { whenLabel } from './Care.jsx'
@@ -66,9 +67,7 @@ export default function Today() {
           <button onClick={openFlare} className="inline-flex h-10 items-center gap-1.5 rounded-full bg-primary-soft px-3.5 text-sm font-bold text-primary hover:brightness-95">
             <Wind size={16} /> {t('flareMode')}
           </button>
-          <Link to="/settings" aria-label={t('settings')} className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-2 text-ink-2 hover:text-ink">
-            <Settings2 size={18} />
-          </Link>
+          <MenuButton />
         </div>
       </header>
 

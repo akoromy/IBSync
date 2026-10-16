@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { MenuButton } from '../components/Layout.jsx'
 import { SendHorizontal, ShieldCheck, ClipboardPlus, RotateCcw } from 'lucide-react'
 import { useStore } from '../store.jsx'
 import { chatReply } from '../ai/client.js'
@@ -65,7 +66,10 @@ export default function Ask() {
           <h1 className="text-[1.75rem] font-black leading-tight tracking-[-0.02em]">{t('ask')} IBSync</h1>
           <p className="mt-0.5 flex items-center gap-1.5 text-sm text-ink-2"><ShieldCheck size={15} className="text-primary" />Explains — never prescribes or changes your treatment.</p>
         </div>
-        {msgs.length > 0 && <button onClick={() => dispatch({ type: 'chat', list: [] })} aria-label="New chat" className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-2 text-ink-2"><RotateCcw size={17} /></button>}
+        <div className="flex shrink-0 items-center gap-2">
+          {msgs.length > 0 && <button onClick={() => dispatch({ type: 'chat', list: [] })} aria-label="New chat" className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-2 text-ink-2"><RotateCcw size={17} /></button>}
+          <MenuButton />
+        </div>
       </header>
 
       <div className="flex-1 space-y-4 px-5 pb-40">
