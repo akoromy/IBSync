@@ -209,4 +209,56 @@ Both pages are published by companies that make IBS apps, so we treated them as 
 
 React 19, Vite, Tailwind CSS v4, Recharts, date-fns, jsPDF, lucide-react · Tencent Hunyuan (OpenAI-compatible API) · developed with **Tencent CodeBuddy** (see `/docs` for conversation-log screenshots).
 
+## Development process
+
+IBSync was built for the Tencent Cloud × AI Singapore "AI CAN DO IT" Hackathon 2026. The entire codebase — from the React UI through the analytics engine, AI layer, and tests — was written in **Tencent CodeBuddy**, an AI pair-programming IDE. The team described what each piece should do in natural language; CodeBuddy generated the implementation, and the team reviewed, refined, and tested every change.
+
+### How the project is organised
+
+| Layer | Folder(s) | What lives there |
+|---|---|---|
+| UI screens | `src/pages/` (9 `.jsx`) | Today, Log, Insights, Meds, Ask, Care, FlareMode, Timeline, Settings |
+| UI building blocks | `src/components/` (5 `.jsx`) | `Layout`, `ui` (buttons, cards, pills), `charts` (Recharts wrappers), `art` (pebbles, icons), `Welcome` onboarding |
+| Analytics engine | `src/lib/analytics.js` | Deterministic food-symptom scoring, Rome IV checks, adherence, red flags, gut-weather, context builder |
+| Other lib | `src/lib/doses.js`, `src/lib/report.js` | Dose scheduling, GP PDF generation (jsPDF) |
+| AI layer | `src/ai/` | `prompts.js` (system prompts with grounding rules), `guardrails.js` (pre/post safety filters), `client.js` (proxy caller with fallback), `localEngine.js` (on-device insight fallback) |
+| Data | `src/data/` | `foods.js` (Singapore food catalogue + trigger tags), `meds.js` (curated medicine KB), `seed.js` (4 weeks of demo data) |
+| Server | `server/` | `aiHandler.js` (AI proxy middleware, holds API key), `index.js` (production static + proxy server) |
+| Tests | `test/analytics.test.js` | 13 tests for `foodScores` and `romeCheck` on sample data |
+| Config | `vite.config.js`, `vercel.json`, `package.json` | Vite + Tailwind + React plugins, AI proxy dev middleware, SPA rewrites, npm scripts |
+
+### Tools and what they were used for
+
+| Tool | Role in the project |
+|---|---|
+| **Tencent CodeBuddy** | AI pair-programming IDE used to write, review, and refactor the entire codebase. Conversation-log screenshots are in `/docs`. |
+| **React 19 + Vite 8** | SPA framework and build/dev server. Vite's middleware hook (`vite.config.js`) also mounts the AI proxy in dev and preview mode so the API key never reaches the browser. |
+| **Tailwind CSS v4** | All styling via utility classes and the `@tailwindcss/vite` plugin. Five colour themes (Teal, Oat & Moss, Sage Clinic, Clay, Espresso) plus the Flare-mode dark theme. |
+| **Recharts** | Charts in Insights (symptom trends, stool distribution, lifestyle effects). |
+| **date-fns v4** | All date arithmetic in the analytics engine (day keys, 28-day windows, minute-difference for post-meal symptom windows, Rome IV time-since logic). |
+| **jsPDF** | Generates the one-page GP visit summary PDF from analytics context (`src/lib/report.js`). |
+| **lucide-react** | Icon set used throughout the UI. |
+| **@fontsource-variable** | Self-hosted fonts: Bricolage Grotesque (headings), Figtree (body), Nunito (alt), plus Noto Sans SC and Noto Sans Tamil for 中文 and தமிழ். Self-hosting keeps the app offline-capable. |
+| **Tencent Hunyuan** | The LLM behind the AI layer (model `hunyuan-turbos-latest`, called through an OpenAI-compatible API). The proxy in `server/aiHandler.js` injects the key server-side; the browser only calls `/api/ai`. |
+| **Node built-in `assert`** | The test script (`test/analytics.test.js`) uses Node's native `assert/strict` and runs with `npm test` — no external test runner. |
+
+### Key design decisions made during development
+
+1. **Numbers from code, words from AI.** The analytics engine (`src/lib/analytics.js`) computes every correlation, score, and verdict deterministically. The LLM only rephrases those numbers — it can't invent statistics. This was a deliberate safety-first choice made early in the build.
+2. **Rules before the model.** Safety-critical paths (emergencies, crisis language, dose changes, unknown medicines) are intercepted by fixed guardrails in `src/ai/guardrails.js` before anything reaches the LLM, guaranteeing zero latency and fixed responses.
+3. **On-device fallback from day one.** `src/ai/localEngine.js` produces the same output shapes as the LLM, so the app works fully offline — essential for a hackathon demo that can't break on stage.
+4. **Local-first storage.** All health logs stay in the browser's `localStorage` (PDPA-friendly, nothing to breach). The trade-off is no cross-device sync yet.
+5. **Singapore-first data.** The food catalogue and medicine KB were hand-curated for local context — hawker dishes broken into trigger ingredients, Singlish/Chinese phrasing in guardrails, four official languages in the UI.
+
+### npm scripts
+
+| Script | What it does |
+|---|---|
+| `npm run dev` | Start Vite dev server on `:5173` with the AI proxy middleware attached |
+| `npm run build` | Production build to `dist/` |
+| `npm start` | Serve the built app + AI proxy on `:8080` (Node, no framework) |
+| `npm run preview` | Vite preview server (also has the AI proxy) |
+| `npm run lint` | Lint with oxlint |
+| `npm test` | Run analytics tests (`test/analytics.test.js`) |
+
 > IBSync explains and organises. It does not diagnose or change treatment.
