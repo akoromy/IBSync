@@ -1,6 +1,8 @@
 # IBSync
 
 **Other IBS apps help you keep a diary. IBSync turns that diary into a better doctor visit, with medicines that make sense and food that's actually Singaporean.**
+<img width="1520" height="864" alt="cover-1520x864" src="https://github.com/user-attachments/assets/4734f0de-f53e-4646-b486-6d52254ccb16" />
+
 
 Tencent Cloud × AI Singapore "AI CAN DO IT" Hackathon 2026 · Healthcare track (NTU LKC Medicine) · **Challenge Statement 2: AI Healthier Every Day, Intelligent Support for Long-Term Self-Care**
 
