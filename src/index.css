@@ -256,3 +256,7 @@ html[data-motion="reduce"] *, html[data-motion="reduce"] *::before { animation: 
 
 .recharts-text { fill: var(--ink-3); font-size: 11px; }
 .recharts-cartesian-grid line { stroke: var(--chart-grid); }
+
+@keyframes menu-in { from { transform: translateX(-100%); } to { transform: none; } }
+.menu-in { animation: menu-in .22s ease-out; }
+@media (prefers-reduced-motion: reduce) { .menu-in { animation: none; } }
