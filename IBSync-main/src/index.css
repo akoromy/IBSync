@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;800&family=Noto+Sans+Tamil:wght@400;600;800&display=swap');
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   IBSync design tokens
+   Four palettes share one token set. Severity always runs
+   calm (moss) → mild (amber) → flare (brick) — never alarm red.
+------------------------------------------------------------------- */
+:root,
+[data-theme="oat"] {
+  --bg: #F8F6F0;
+  --surface: #FFFDF9;
+  --surface-2: #F0ECE2;
+  --ink: #2A2621;
+  --ink-2: #6B6358;
+  --ink-3: #958C80;
+  --line: #E5DFD2;
+  --primary: #4E8273;
+  --primary-ink: #FFFFFF;
+  --primary-soft: #E2EDE8;
+  --accent: #B96E4A;
+  --accent-soft: #F5E6DC;
+  --calm: #5A8F7F;
+  --calm-soft: #E2EEE9;
+  --mild: #C9962F;
+  --mild-soft: #F7EDD5;
+  --flare: #A9573C;
+  --flare-soft: #F4E1D8;
+  --chart-grid: #ECE6DA;
+  --shadow: 0 1px 0 rgba(60, 45, 30, .04), 0 8px 24px -16px rgba(60, 45, 30, .18);
+  color-scheme: light;
+}
+
+[data-theme="sage"] {
+  --bg: #EBF1EE;
+  --surface: #F8FBF9;
+  --surface-2: #DFE9E4;
+  --ink: #1E2B27;
+  --ink-2: #566862;
+  --ink-3: #82938D;
+  --line: #D2DED8;
+  --primary: #2F6B5E;
+  --primary-ink: #FFFFFF;
+  --primary-soft: #D3E6DE;
+  --accent: #C27650;
+  --accent-soft: #F3E3D8;
+  --calm: #3F7E6E;
+  --calm-soft: #D6EAE2;
+  --mild: #BF8E2A;
+  --mild-soft: #F3EAD2;
+  --flare: #A4553B;
+  --flare-soft: #F1DFD6;
+  --chart-grid: #DCE6E1;
+  --shadow: 0 1px 0 rgba(20, 50, 40, .04), 0 8px 24px -16px rgba(20, 50, 40, .2);
+  color-scheme: light;
+}
+
+[data-theme="clay"] {
+  --bg: #F7F0E8;
+  --surface: #FFFBF6;
+  --surface-2: #EFE3D6;
+  --ink: #2F231C;
+  --ink-2: #745F51;
+  --ink-3: #A08B7C;
+  --line: #E7D8C8;
+  --primary: #A55F3C;
+  --primary-ink: #FFFFFF;
+  --primary-soft: #F3DFD1;
+  --accent: #4E7F71;
+  --accent-soft: #DDEBE5;
+  --calm: #5A8F7F;
+  --calm-soft: #E0EDE7;
+  --mild: #C2902C;
+  --mild-soft: #F5EAD3;
+  --flare: #9C4E35;
+  --flare-soft: #F2DED4;
+  --chart-grid: #EDE1D4;
+  --shadow: 0 1px 0 rgba(70, 40, 20, .04), 0 8px 24px -16px rgba(70, 40, 20, .2);
+  color-scheme: light;
+}
+
+[data-theme="espresso"] {
+  --bg: #1C1917;
+  --surface: #25201D;
+  --surface-2: #2F2925;
+  --ink: #F2EBE3;
+  --ink-2: #B8AC9F;
+  --ink-3: #8A7F74;
+  --line: #3A332E;
+  --primary: #8EC0AF;
+  --primary-ink: #13201C;
+  --primary-soft: #2A3833;
+  --accent: #DDA07C;
+  --accent-soft: #3B2B22;
+  --calm: #8EC0AF;
+  --calm-soft: #263430;
+  --mild: #E2B862;
+  --mild-soft: #3A3122;
+  --flare: #D98A6B;
+  --flare-soft: #3D2820;
+  --chart-grid: #332C27;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .2), 0 10px 28px -18px rgba(0, 0, 0, .6);
+  color-scheme: dark;
+}
+
+/* Flare mode: dimmed, low-stimulus variant of espresso */
+.flare-mode {
+  --bg: #161311;
+  --surface: #1E1A17;
+  --surface-2: #27221E;
+  --ink: #E4DCD2;
+  --ink-2: #A69A8D;
+  --primary: #9CC4B5;
+  --primary-ink: #13201C;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-calm: var(--calm);
+  --color-calm-soft: var(--calm-soft);
+  --color-mild: var(--mild);
+  --color-mild-soft: var(--mild-soft);
+  --color-flare: var(--flare);
+  --color-flare-soft: var(--flare-soft);
+  --font-sans: "Nunito Variable", "Nunito", "Noto Sans SC", "Noto Sans Tamil", ui-rounded, system-ui, sans-serif;
+  --shadow-soft: var(--shadow);
+}
+
+/* Text size setting scales everything (rem-based) */
+html { font-size: 16px; }
+html[data-size="lg"] { font-size: 18px; }
+html[data-size="xl"] { font-size: 20px; }
+
+html, body, #root { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 0;
+}
+.num { font-variant-numeric: tabular-nums; }
+
+:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+
+input[type="range"].ibs-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  background: transparent;
+}
+input[type="range"].ibs-range::-webkit-slider-runnable-track {
+  height: 10px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--calm), var(--mild) 55%, var(--flare));
+}
+input[type="range"].ibs-range::-moz-range-track {
+  height: 10px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--calm), var(--mild) 55%, var(--flare));
+}
+input[type="range"].ibs-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 30px; height: 30px; margin-top: -10px; border-radius: 50%;
+  background: var(--surface); border: 3px solid var(--ink);
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+input[type="range"].ibs-range::-moz-range-thumb {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 3px solid var(--ink);
+}
+
+.scroll-x { overflow-x: auto; scrollbar-width: none; }
+.scroll-x::-webkit-scrollbar { display: none; }
+
+@keyframes breathe {
+  0%   { transform: scale(.62); }
+  33%  { transform: scale(1); }
+  55%  { transform: scale(1); }
+  100% { transform: scale(.62); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.rise { animation: rise .45s ease-out both; }
+@keyframes pulse-dot { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+.typing span { animation: pulse-dot 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+html[data-motion="reduce"] *, html[data-motion="reduce"] *::before { animation: none !important; transition: none !important; }
+
+.recharts-text { fill: var(--ink-3); font-size: 11px; }
+.recharts-cartesian-grid line { stroke: var(--chart-grid); }
