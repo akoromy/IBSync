@@ -57,6 +57,25 @@ export async function complete({ messages, json = false, temperature = 0.4 }) {
   }
 }
 
+// Abuse protection for a public deployment: per-visitor rate limit plus a
+// daily cap on total model calls, so nobody can burn through the API quota.
+//   AI_RATE_PER_10MIN  per-IP calls per 10 minutes (default 30)
+//   AI_DAILY_LIMIT     total calls per day across everyone (default 300)
+const hits = new Map()
+let day = new Date().toDateString(), dayCount = 0
+export function allow(ip) {
+  const now = Date.now()
+  const perIp = +(process.env.AI_RATE_PER_10MIN || 30)
+  const daily = +(process.env.AI_DAILY_LIMIT || 300)
+  if (new Date().toDateString() !== day) { day = new Date().toDateString(); dayCount = 0 }
+  if (dayCount >= daily) return false
+  const recent = (hits.get(ip) || []).filter(t => now - t < 10 * 60 * 1000)
+  if (recent.length >= perIp) return false
+  recent.push(now); hits.set(ip, recent); dayCount++
+  if (hits.size > 5000) hits.clear()
+  return true
+}
+
 // Connect/Express-style middleware used by Vite dev/preview and server/index.js
 export function aiMiddleware() {
   return async (req, res, next) => {
@@ -64,6 +83,8 @@ export function aiMiddleware() {
     res.setHeader('Content-Type', 'application/json')
     if (req.url.startsWith('/api/ai/health')) return res.end(JSON.stringify(health()))
     if (req.method !== 'POST') { res.statusCode = 405; return res.end('{}') }
+    const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown'
+    if (!allow(ip)) { res.statusCode = 429; return res.end(JSON.stringify({ error: 'Too many AI requests, try again later' })) }
     let raw = ''
     for await (const chunk of req) { raw += chunk; if (raw.length > 200000) break }
     try {
