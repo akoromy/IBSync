@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { format, parseISO, differenceInCalendarDays, addDays } from 'date-fns'
 import { CalendarHeart, FileDown, X, Plus, ShieldAlert, Stethoscope, FlaskConical, Syringe, Bell, Check, Pencil, Trash2, Repeat, CircleCheck, Circle, ClipboardList, Activity, BarChart3, Pill, ArrowRight, MapPin, Info, ShieldCheck } from 'lucide-react'
 import { useStore, uid } from '../store.jsx'
+import { useLocation } from 'react-router-dom'
 import { PageHeader } from '../components/Layout.jsx'
 import { Card, H2, Btn, AiSource, Skeleton, Chip } from '../components/ui.jsx'
 import { getDoctorQuestions } from '../ai/client.js'
@@ -32,6 +33,13 @@ export default function Care() {
   const [qs, setQs] = useState(null)
   const [draft, setDraft] = useState('')
   const [editing, setEditing] = useState(null) // item | {prefill} | null
+  const { search } = useLocation()
+  useEffect(() => {
+    const sec = new URLSearchParams(search).get('s')
+    if (!sec) return
+    const id = setTimeout(() => document.getElementById(sec)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120)
+    return () => clearTimeout(id)
+  }, [search])
   const [preview, setPreview] = useState(false)
   const draftRef = useRef(null)
   const suspected = state.profile.status === 'suspected'
@@ -67,6 +75,7 @@ export default function Care() {
     <div>
       <PageHeader back title={t('care')} sub={suspected ? 'Turn your logs into answers at your GP visit.' : 'Get ready for appointments and stay ahead of check-ups.'} />
 
+      <div id="visit" className="scroll-mt-4" />
       <VisitPass appt={schedule.find(x => x.kind === 'appointment') || schedule[0]} questions={qs?.questions || []}
         onReview={() => setPreview(true)}
         onAddQuestion={() => { draftRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => draftRef.current?.focus(), 350) }}
@@ -74,7 +83,7 @@ export default function Care() {
 
       {suspected && <DiagnosisDiary />}
 
-      <section className="px-5">
+      <section id="schedule" className="scroll-mt-4 px-5">
         <H2 action={!editing && <button onClick={() => setEditing({})} className="inline-flex items-center gap-1 text-sm font-bold text-primary"><Plus size={16} />Add</button>}>Your schedule</H2>
         {editing && <ItemForm item={editing.id ? editing : null} prefill={editing.prefill} onClose={() => setEditing(null)} />}
         {schedule.length === 0 && !editing && <p className="rounded-2xl bg-surface-2 p-4 text-sm text-ink-2">Nothing scheduled. Add an appointment, test or check-up — or pick one of the suggestions below.</p>}
@@ -109,7 +118,7 @@ export default function Care() {
         </div>
       </section>
 
-      <section className="px-5 pt-7">
+      <section id="questions" className="scroll-mt-4 px-5 pt-7">
         <H2>Questions to bring</H2>
         <Card className="p-4">
           {qs ? (
@@ -139,7 +148,7 @@ export default function Care() {
         </form>
       </section>
 
-      <section className="px-5 pt-7">
+      <section id="report" className="scroll-mt-4 px-5 pt-7">
         <Btn className="w-full" onClick={() => exportReport({ state, ctx, questions: qs?.questions })}>
           <FileDown size={19} /> {suspected ? 'Download symptom diary for my GP' : t('exportReport')}
         </Btn>
